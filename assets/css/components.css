@@ -30,7 +30,7 @@
 }
 
 .unread-glow {
-  box-shadow: 0 0 8px rgba(59, 246, 234, 0.5);
+  box-shadow: 0 0 8px theme('colors.primary.600');
 }
 
 .translucent {

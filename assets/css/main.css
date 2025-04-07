@@ -10,15 +10,15 @@
 }
 
 :root, :before, :after, * {
-  --vf-primary: theme('colors.primary.DEFAULT');
-  --vf-primary-darker: theme('colors.primary.600');
+  --vf-primary: theme('colors.primary.DEFAULT') !important;
+  --vf-primary-darker: theme('colors.primary.600') !important;
 }
 
 @keyframes fadeInUp {
   from {
     opacity: 0;
     /* transform: translate3d(0, 15%, 0); */
-    transform: translate3d(0, 20px, 0);
+    transform: translate3d(0, 12px, 0);
   }
 
   to {
