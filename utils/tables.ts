@@ -1,14 +1,14 @@
 export const tableColumns: any = {
   items: [
     {
-      label: 'ID',
-      key: 'id',
-      sortable: false
-    },
-    {
       label: 'Name',
       key: 'name',
-      sortable: false
+      sortable: true
+    },
+    {
+      label: 'Tags',
+      key: 'tagsFormatted',
+      sortable: true
     },
     {
       label: 'JSON',
@@ -18,29 +18,29 @@ export const tableColumns: any = {
     {
       label: 'Files',
       key: 'fileCount',
-      sortable: false
+      sortable: true
     },
     {
       label: 'Created',
       key: 'createdFormatted',
-      sortable: false
+      sortable: true
     },
   ],
   tags: [
     {
-      label: 'ID',
-      key: 'id',
-      sortable: false
+      label: 'Name',
+      key: 'nameFormatted',
+      sortable: true
     },
     {
-      label: 'Name',
-      key: 'name',
-      sortable: false
+      label: 'Linked Items',
+      key: 'numItems',
+      sortable: true
     },
     {
       label: 'Created',
       key: 'createdFormatted',
-      sortable: false
+      sortable: true
     }
   ]
 }
@@ -48,17 +48,28 @@ export const tableColumns: any = {
 export const tableComputed: Record<string, (row: Record<string, any>) => Record<string, any>> = {
   items: (row) => ({
     fileCount: row.files.length,
+    tagsFormatted: row.expand?.tags?.map((tag: any) => `#${tag.name}`).join(' '),
     createdFormatted: row.created ? new Date(row.created).toLocaleDateString('en-CA', {
       year: 'numeric',
       month: '2-digit',
-      day: '2-digit'
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false
     }) : 'N/A'
   }),
   tags: (row) => ({
+    nameFormatted: `#${row.name}`,
+    numItems: row.expand?.items_via_tags?.length,
     createdFormatted: row.created ? new Date(row.created).toLocaleDateString('en-CA', {
       year: 'numeric',
       month: '2-digit',
-      day: '2-digit'
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false
     }) : 'N/A'
   }),
 }

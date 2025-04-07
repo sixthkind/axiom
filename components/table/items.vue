@@ -1,12 +1,13 @@
 <template>
-    <TableUI
-      :rows="items" 
-      type="items"
-      :loading="loading"
-      :clickable="true"
-      :edit="true"
-      @refresh="refresh"
-    />
+  <TableUI
+    class="animated fadeInUp"
+    :rows="items" 
+    type="items"
+    :loading="loading"
+    :clickable="true"
+    :edit="true"
+    @refresh="refresh"
+  />
 </template>
 
 <script setup>
@@ -28,6 +29,7 @@
         expand: 'tags'
       });
       items.value = records;
+      console.log(items.value);
     } catch (error) {
       console.error('Error fetching items:', error);
     } finally {

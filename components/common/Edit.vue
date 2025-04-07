@@ -95,8 +95,8 @@
   }
 
   // Check if the type is in the array of non-deletable types
-  const isDeletionAllowed = !getSchema('notdeletable').includes(type);
-  let formSchema = getSchema(type);
+  const isDeletionAllowed = !(await getSchema('notdeletable')).includes(type);
+  let formSchema = await getSchema(type);
   const isError = ref(false);
   const errorMessage = ref('')
 
@@ -154,10 +154,17 @@
     
     // Append all non-file data
     Object.keys(data.value).forEach(key => {
-      if (formSchema[key]?.type !== 'file') {
+      if (formSchema[key]?.type !== 'multifile' && formSchema[key]?.type !== 'file') {
         if(data.value[key]) {
           if(formSchema[key]?.type == 'date') {
             formData.append(key, formatDate(data.value[key]));
+          } else if (formSchema[key]?.type == 'tags') {
+            // Handle tags as an array
+            if (Array.isArray(data.value[key])) {
+              data.value[key].forEach(tag => {
+                formData.append(`${key}`, tag);
+              });
+            }
           } else {
             formData.append(key, data.value[key]);
           }
@@ -222,7 +229,7 @@
   const updateItem = async () => {
     try {
       const formData = createSharedFormData();
-      // printFormData(formData);
+      printFormData(formData);
       await pb.collection(type).update(id, formData);
       showSuccess();
     } catch (error) {

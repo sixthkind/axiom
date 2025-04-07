@@ -1,5 +1,20 @@
-function getSchema(type: string) {
-  return schemas[type];
+async function getSchema(type: string) {
+  let schema = schemas[type];
+
+  if(type === 'items') {
+    let tags = await getTags();
+    schema.tags.items = tags;
+  }
+
+  return schema;
+}
+
+async function getTags() {
+  const tags = await pb.collection('tags').getFullList();
+  return tags.map(tag => ({
+    value: tag.id,
+    label: tag.name
+  }));
 }
 
 const schemas: any = {
@@ -9,9 +24,12 @@ const schemas: any = {
   },
   items: {
     name: { type: "text", label: "Name" },
-    json: { type: "textarea", label: "JSON" },
-    files: { type: "file", label: "Files", drop: true, "upload-temp-endpoint": false, "soft-remove": true },
-    tags: { type: "select", label: "Tags", options: [] }
+    json: { type: "object", label: "JSON" },
+    files: { type: "multifile", label: "Files", "upload-temp-endpoint": false, "soft-remove": true, "upload-button": false },
+    tags: { type: "tags", label: "Tags", items: [] }
+  },
+  tags: {
+    name: { type: "text", label: "Name" }
   },
   notdeletable: ['users']
 }

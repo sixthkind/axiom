@@ -4,6 +4,10 @@
       <h2 class="text-lg font-semibold">{{ props.type.charAt(0).toUpperCase() + props.type.slice(1) }}&nbsp;({{ filteredRows.length }})</h2>
 
       <div class="flex flex-col sm:flex-row items-start sm:items-center gap-2">
+        <div class="flex items-center gap-2">
+          <UButton @click="items" :color="props.type === 'items' ? 'primary' : 'gray'" size="sm">items</UButton>
+          <UButton @click="tags" :color="props.type === 'tags' ? 'primary' : 'gray'" size="sm">tags</UButton>
+        </div>
         <UInput v-model="searchQuery" :placeholder="`Search ${props.type}`" class="w-full sm:w-auto"/>
         <div class="flex items-center gap-2">
           <USelectMenu v-model="selectedColumns" :options="columns" multiple placeholder="Columns" class="w-full sm:w-auto"/>
@@ -74,6 +78,14 @@
 
   const add = () => {
     window.location.href = `/edit/${props.type}`;
+  }
+
+  const items = () => {
+    window.location.href = `/`;
+  }
+
+  const tags = () => {
+    window.location.href = `/tags`;
   }
 </script>
 
