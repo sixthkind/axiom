@@ -49,6 +49,9 @@ export const tableComputed: Record<string, (row: Record<string, any>) => Record<
   items: (row) => ({
     fileCount: row.files.length,
     tagsFormatted: row.expand?.tags?.map((tag: any) => `#${tag.name}`).join(' '),
+    contentFormatted: row.content ? (row.content.replace(/<[^>]*>/g, '').length > 40 
+      ? row.content.replace(/<[^>]*>/g, '').substring(0, 40) + '...'
+      : row.content.replace(/<[^>]*>/g, '')) : '',
     createdFormatted: row.created ? new Date(row.created).toLocaleDateString('en-CA', {
       year: 'numeric',
       month: '2-digit',
@@ -58,7 +61,6 @@ export const tableComputed: Record<string, (row: Record<string, any>) => Record<
       second: '2-digit',
       hour12: false
     }) : 'N/A',
-    contentFormatted: row.content ? row.content.replace(/<[^>]*>/g, '') : ''
   }),
   tags: (row) => ({
     nameFormatted: `#${row.name}`,
