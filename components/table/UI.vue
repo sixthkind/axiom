@@ -8,6 +8,7 @@
         <div class="flex items-center gap-2">
           <USelectMenu v-model="selectedColumns" :options="columns" multiple placeholder="Columns" class="w-full sm:w-auto"/>
           <UButton @click="refresh" color="primary" size="sm"><Icon name="lucide:refresh-cw" /></UButton>
+          <UButton @click="add" color="primary" size="sm"><Icon name="lucide:plus" /></UButton>
         </div>
       </div>
     </div>
@@ -69,6 +70,10 @@
 
   const refresh = () => {
     emit('refresh')
+  }
+
+  const add = () => {
+    window.location.href = `/edit/${props.type}`;
   }
 </script>
 
