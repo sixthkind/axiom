@@ -24,7 +24,7 @@ const schemas: any = {
   },
   items: {
     name: { type: "text", label: "Name" },
-    json: { type: "object", label: "JSON" },
+    content: { type: "editor", label: "Content" },
     files: { type: "multifile", label: "Files", "upload-temp-endpoint": false, "soft-remove": true, "upload-button": false },
     tags: { type: "tags", label: "Tags", items: [] }
   },

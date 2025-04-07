@@ -11,8 +11,8 @@ export const tableColumns: any = {
       sortable: true
     },
     {
-      label: 'JSON',
-      key: 'json',
+      label: 'Content',
+      key: 'contentFormatted',
       sortable: false
     },
     {
@@ -57,7 +57,8 @@ export const tableComputed: Record<string, (row: Record<string, any>) => Record<
       minute: '2-digit',
       second: '2-digit',
       hour12: false
-    }) : 'N/A'
+    }) : 'N/A',
+    contentFormatted: row.content ? row.content.replace(/<[^>]*>/g, '') : ''
   }),
   tags: (row) => ({
     nameFormatted: `#${row.name}`,
