@@ -7,6 +7,7 @@
         <div class="flex items-center gap-2">
           <UButton @click="items" :color="props.type === 'items' ? 'primary' : 'gray'" size="sm">items</UButton>
           <UButton @click="tags" :color="props.type === 'tags' ? 'primary' : 'gray'" size="sm">tags</UButton>
+          <UButton @click="clients" :color="props.type === 'clients' ? 'primary' : 'gray'" size="sm">clients</UButton>
         </div>
         <UInput v-model="searchQuery" :placeholder="`Search ${props.type}`" class="w-full sm:w-auto"/>
         <div class="flex items-center gap-2">
@@ -86,6 +87,10 @@
 
   const tags = () => {
     window.location.href = `/tags`;
+  }
+
+  const clients = () => {
+    window.location.href = `/clients`;
   }
 </script>
 

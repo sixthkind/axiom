@@ -38,6 +38,28 @@ export const tableColumns: any = {
       sortable: true
     },
     {
+      label: 'Clients',
+      key: 'numClients',
+      sortable: true
+    },
+    {
+      label: 'Created',
+      key: 'createdFormatted',
+      sortable: true
+    }
+  ],
+  clients: [
+    {
+      label: 'Name',
+      key: 'name',
+      sortable: true
+    },
+    {
+      label: 'Permission',
+      key: 'tagsFormatted',
+      sortable: true
+    },
+    {
       label: 'Created',
       key: 'createdFormatted',
       sortable: true
@@ -65,6 +87,7 @@ export const tableComputed: Record<string, (row: Record<string, any>) => Record<
   tags: (row) => ({
     nameFormatted: `#${row.name}`,
     numItems: row.expand?.items_via_tags?.length || 0,
+    numClients: row.expand?.clients_via_tags?.length || 0,
     createdFormatted: row.created ? new Date(row.created).toLocaleDateString('en-CA', {
       year: 'numeric',
       month: '2-digit',
@@ -75,4 +98,16 @@ export const tableComputed: Record<string, (row: Record<string, any>) => Record<
       hour12: false
     }) : 'N/A'
   }),
+  clients: (row) => ({
+    tagsFormatted: row.expand?.tags?.map((tag: any) => `#${tag.name}`).join(' '),
+    createdFormatted: row.created ? new Date(row.created).toLocaleDateString('en-CA', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false
+    }) : 'N/A'
+  })
 }

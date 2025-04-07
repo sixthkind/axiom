@@ -1,8 +1,8 @@
 <template>
   <TableUI
     class="animated fadeInUp"
-    :rows="tags" 
-    type="tags"
+    :rows="clients" 
+    type="clients"
     :loading="loading"
     :clickable="true"
     :edit="true"
@@ -13,7 +13,7 @@
 <script setup>
 import { pb } from '#imports';
 
-const tags = ref([]);
+const clients = ref([]);
 const loading = ref(true);
 // const activeTab = ref(false);
 // const tabs = [
@@ -22,15 +22,15 @@ const loading = ref(true);
 // ];
 
 // Fetch items for the counselor
-const fetchTags = async () => {
+const fetchClients = async () => {
   try {
-      const records = await pb.collection('tags').getFullList({
+      const records = await pb.collection('clients').getFullList({
       sort: '-created',
-      expand: 'items_via_tags,clients_via_tags'
+      expand: 'tags'
     });
-    tags.value = records;
+    clients.value = records;
   } catch (error) {
-    console.error('Error fetching tags:', error);
+    console.error('Error fetching clients:', error);
   } finally {
     loading.value = false;
   }
@@ -38,15 +38,15 @@ const fetchTags = async () => {
 
 const refresh = () => {
   loading.value = true;
-  fetchTags();
+  fetchClients();
 }
 
 // watch(activeTab, () => {
 //   loading.value = true;
-//   fetchTags();
+//   fetchClients();
 // });
 
 onMounted(() => {
-  fetchTags();
+  fetchClients();
 });
 </script>
