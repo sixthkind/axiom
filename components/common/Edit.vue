@@ -158,13 +158,11 @@
         if(data.value[key]) {
           if(formSchema[key]?.type == 'date') {
             formData.append(key, formatDate(data.value[key]));
-          } else if (formSchema[key]?.type == 'tags') {
-            // Handle tags as an array
-            if (Array.isArray(data.value[key])) {
-              data.value[key].forEach(tag => {
-                formData.append(`${key}`, tag);
-              });
-            }
+          } else if (Array.isArray(data.value[key])) {
+            // Handle array fields
+            data.value[key].forEach(value => {
+              formData.append(`${key}`, value);
+            });
           } else {
             formData.append(key, data.value[key]);
           }
@@ -172,12 +170,25 @@
       }
     });
 
-    // Handle file fields
     Object.keys(formSchema).forEach(key => {
+      // Handle file fields
       if (formSchema[key].type === 'file') {
         if(data.value[key]) {
           if (data.value[key] instanceof File) {
             formData.append(key, data.value[key]);
+          }
+        } else {
+          formData.append(key, "");
+        }
+      }
+
+      // Handle multifile fields
+      if (formSchema[key].type === 'multifile') {
+        if(data.value[key]) {
+          if(Array.isArray(data.value[key])) {
+            data.value[key].forEach(file => {
+              formData.append(key, file);
+            });
           }
         } else {
           formData.append(key, "");

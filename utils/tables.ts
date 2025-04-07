@@ -62,7 +62,7 @@ export const tableComputed: Record<string, (row: Record<string, any>) => Record<
   }),
   tags: (row) => ({
     nameFormatted: `#${row.name}`,
-    numItems: row.expand?.items_via_tags?.length,
+    numItems: row.expand?.items_via_tags?.length || 0,
     createdFormatted: row.created ? new Date(row.created).toLocaleDateString('en-CA', {
       year: 'numeric',
       month: '2-digit',
