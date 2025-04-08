@@ -4,13 +4,28 @@
       <header class="flex w-full flex-col lg:flex-row justify-between items-center pb-3 mb-5">
         <div class="flex w-full items-center justify-between">
 
-          <div class="bg-white bg-opacity-90 hover:bg-opacity-70 flex backdrop-blur mt-3 rounded-2xl border p-2">
-            <a href="/">
-              <span class="font-bold text-primary">_</span><span class="font-bold text-slate-500">tansy</span><span class="font-bold text-slate-400">.ai</span>
-            </a>
+          <div class="flex items-center gap-3">
+            <div class="bg-white bg-opacity-90 hover:bg-opacity-70 flex backdrop-blur mt-3 rounded-2xl border p-2">
+              <a href="/">
+                <span class="font-bold text-primary">_</span><span class="font-bold text-slate-500">tansy</span><span class="font-bold text-slate-400">.dev</span>
+              </a>
+            </div>
+
           </div>
 
-          <div v-if="pb.authStore.isValid" class="block md:hidden bg-white bg-opacity-70 backdrop-blur mt-3 rounded-2xl border p-2">
+          <div class="flex items-center gap-3">
+            <a href="/playground" class="text-slate-500 hover:text-primary font-bold text-sm mt-4">
+              Playground
+            </a>
+
+            <div v-if="pb.authStore.isValid" class="hidden md:flex bg-white bg-opacity-70 backdrop-blur mt-3 rounded-2xl border p-2 flex items-center">
+              <a href="/profile">
+                <span class="font-bold text-primary">{{ emailUsername }}</span>
+                <span class="font-bold text-slate-500">@</span><span class="font-bold text-slate-400">{{ emailDomain }}</span>
+              </a>
+            </div>
+
+            <div v-if="pb.authStore.isValid" class="block md:hidden bg-white bg-opacity-70 backdrop-blur mt-3 rounded-2xl border p-2">
             <button @click="open = !open" class="text-gray-800 pr-1 pl-0.5">
               <svg
                 fill="currentColor"
@@ -33,13 +48,6 @@
               </svg>
             </button>
           </div>
-
-          <div v-if="pb.authStore.isValid" class="hidden md:flex bg-white bg-opacity-70 backdrop-blur mt-3 rounded-2xl border p-2 flex items-center">
-            <a href="/profile">
-              <span class="font-bold text-primary">{{ emailUsername }}</span>
-              <span class="font-bold text-slate-500">@</span><span class="font-bold text-slate-400">{{ emailDomain }}</span>
-
-            </a>
           </div>
 
         </div>
