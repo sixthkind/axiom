@@ -66,15 +66,26 @@
       <div 
        v-for="result in results" 
        :key="result.id"
-       class="border-b border-dashed border-slate-200">
-        <p class="flex justify-between items-center">
+       class="border-b border-dashed border-slate-200"
+      >
+        <div 
+          class="flex justify-between items-center cursor-pointer py-2"
+          @click="result.isExpanded = !result.isExpanded"
+        >
           <span class="font-bold text-slate-400 text-sm">{{ result.name }}</span>
-          <span class="flex gap-2">
-            <span v-for="tag in result.expand.tags" :key="tag.id" class="k-tag">
-              #{{ tag.name }}
+          <div class="flex items-center gap-2">
+            <span class="flex gap-2">
+              <span v-for="tag in result.expand.tags" :key="tag.id" class="k-tag">
+                #{{ tag.name }}
+              </span>
             </span>
-          </span>
-        </p>
+            <span class="text-xs text-slate-400">{{ result.isExpanded ? '▼' : '▶' }}</span>
+          </div>
+        </div>
+        
+        <div v-if="result.isExpanded" @click="result.isExpanded = !result.isExpanded" class="cursor-pointer animated fadeInDown">
+          <div v-html="result.content" class="prose text-sm text-slate-500 max-w-none"></div>
+        </div>
       </div>
     </div>
   </div>
@@ -126,12 +137,24 @@
       let res = await pb.collection("items").getFullList({
         expand: "tags"
       });
-      results.value = res;
+
+      // TODO
+      // Just filtering for now. This obviously needs to be done on the server side permissions.
+      results.value = filterItemsByTags(res, data.value.client.expand.tags);
       isResults.value = true;
     } catch (error) {
       errorMessage.value = error.message || 'An error occurred while submitting the request';
     }
   };
 
-
+  const filterItemsByTags = (items, clientTags) => {
+    // filter items by client access tags
+    if (!clientTags || clientTags.length === 0) return [];
+    return items.filter(item => {
+      if (!item.expand?.tags) return false;
+      const itemTagNames = item.expand.tags.map(tag => tag.name);
+      const clientTagNames = clientTags.map(tag => tag.name);
+      return itemTagNames.some(tagName => clientTagNames.includes(tagName));
+    });
+  }
 </script>
