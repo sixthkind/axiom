@@ -13,8 +13,8 @@
           :items="clients"
         />
 
-        <h2 class="font-bold text-slate-300 text-lg">🤨&nbsp;Question</h2>
-        <TextElement name="question" disabled />
+        <h2 class="font-bold text-slate-500 text-lg">🤨&nbsp;Question</h2>
+        <TextElement name="question" />
 
         <ButtonElement name="button" :submits="true" class="pt-4">
           Make Request
@@ -62,6 +62,12 @@
       </p>
 
       <hr class="mt-4 mb-2 border-slate-200">
+      <h2 class="font-bold text-slate-500 text-lg pb-2">🗣️ Response</h2>
+      <div>
+        <div v-html="assistantMessage" class="prose text-sm text-slate-500 max-w-none"></div>
+      </div>
+
+      <hr class="mt-4 mb-2 border-slate-200">
       <h2 class="font-bold text-slate-500 text-lg pb-2">📋 Data</h2>
       <div 
        v-for="result in results" 
@@ -93,6 +99,7 @@
 
 <script setup>
   import { pb } from "#imports";
+  import prompt from "./prompt.ts";
   const isLoading = ref(true);
   const clients = ref([]);
   const data = ref({});
@@ -100,6 +107,30 @@
   const results = ref([]);
   const isResults = ref(false);
   const isInfoExpanded = ref(false);
+
+  const assistantMessage = ref('');
+  const isTyping = ref(false);
+  const config = useRuntimeConfig();
+  const openrouterAssetID = String(config.public.openrouterAssetID);
+  import OpenAI from 'openai'
+  const API_KEY = (await pb.collection('_assets').getOne(openrouterAssetID)).title;
+
+  const openai = new OpenAI({
+    baseURL: "https://openrouter.ai/api/v1",
+    apiKey: API_KEY,
+    dangerouslyAllowBrowser: true,
+    defaultHeaders: {
+      'HTTP-Referer': 'https://tansy.me', // Replace with your website URL
+      'X-Title': 'TansyMe', // Replace with your app name
+    },
+    defaultQuery: { },
+    fetch: (url, init) => {
+      delete init.headers['x-stainless-timeout'];
+      delete init.headers['x-stainless-async'];
+      return fetch(url, init);
+    }
+  })
+
 
   onMounted(async () => {
     await init();
@@ -142,10 +173,48 @@
       // Just filtering for now. This obviously needs to be done on the server side permissions.
       results.value = filterItemsByTags(res, data.value.client.expand.tags);
       isResults.value = true;
+
+      answerQuestion();
     } catch (error) {
       errorMessage.value = error.message || 'An error occurred while submitting the request';
     }
   };
+
+  async function answerQuestion() {
+  isTyping.value = true
+
+  let userDataPrompt = `
+    User Data:
+      ${results.value.map(result => `Title: ${result.name}\nContent: ${result.content}`).join('\n')}
+    `;
+
+  let messages = [
+    { role: 'system', content: prompt },
+    { role: 'system', content: userDataPrompt },
+    { role: 'user', content: data.value.question }
+  ];
+  
+  try {
+    const stream = await openai.chat.completions.create({
+      messages: messages,
+      stream: true,
+      temperature: 0.7,
+      max_tokens: 500,
+    })
+
+    assistantMessage.value = '';
+    for await (const chunk of stream) {
+      const content = chunk.choices[0]?.delta?.content || ''
+      assistantMessage.value += content
+    }
+  } catch (error) {
+    console.error('Error:', error)
+    assistantMessage.value = 'I apologize, but I encountered an error. Please try again.';
+  } finally {
+    isTyping.value = false
+  }
+}
+
 
   const filterItemsByTags = (items, clientTags) => {
     // filter items by client access tags

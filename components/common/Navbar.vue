@@ -7,7 +7,7 @@
           <div class="flex items-center gap-3">
             <div class="bg-white bg-opacity-90 hover:bg-opacity-70 flex backdrop-blur mt-3 rounded-2xl border p-2">
               <a href="/">
-                <span class="font-bold text-primary">_</span><span class="font-bold text-slate-500">tansy</span><span class="font-bold text-slate-400">.dev</span>
+                <span class="font-bold text-primary">_</span><span class="font-bold text-slate-500">tansy</span><span class="font-bold text-slate-400">.me</span>
               </a>
             </div>
 
