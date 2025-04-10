@@ -6,10 +6,10 @@
 }
 
 .k-item {
-  background: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.7);
   backdrop-filter: blur(20px);
-  border-radius: 25px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 6px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.03);
   padding: 20px;
   margin-bottom: 12px;
 }
@@ -30,10 +30,16 @@
 }
 
 .unread-glow {
-  box-shadow: 0 0 8px rgba(59, 246, 234, 0.5);
+  box-shadow: 0 0 8px theme('colors.primary.600');
 }
 
 .translucent {
   background: rgba(255, 255, 255, 0.3);
   backdrop-filter: blur(12px);
+}
+
+.k-tag {
+  font-size: 0.775rem; /* Text size */
+  font-weight: 700; /* Bold text */
+  color: theme('colors.primary.600')
 }

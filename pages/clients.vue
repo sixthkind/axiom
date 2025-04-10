@@ -7,6 +7,6 @@ definePageMeta({
 
 <template>
   <CommonContainer>
-    <TableItems />
+    <TableClients />
   </CommonContainer>
 </template>

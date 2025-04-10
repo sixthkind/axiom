@@ -28,7 +28,8 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       environment: process.env.VITE_ENVIRONMENT,
-      pocketbaseURL: process.env.VITE_POCKETBASE_URL
+      pocketbaseURL: process.env.VITE_POCKETBASE_URL,
+      openrouterAssetID: process.env.VITE_OPENROUTER_ASSET_ID
     }
   },
 
