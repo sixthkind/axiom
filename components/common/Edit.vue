@@ -233,7 +233,7 @@
     isSuccess.value = true;
     setTimeout(() => {
       isSuccess.value = false;
-      window.history.back();
+      // window.history.back();
     }, 1000);
   }
 
