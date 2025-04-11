@@ -46,8 +46,11 @@
   //   fetchTags();
   // });
 
-  onMounted(() => {
-    console.log('tags mounted');
-    fetchTags();
-  });
+  // onMounted(() => {
+  //   console.log('tags mounted');
+  //   fetchTags();
+  // });
+
+  fetchTags();
+
 </script>
