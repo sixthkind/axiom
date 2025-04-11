@@ -151,7 +151,7 @@
   const createSharedFormData = () => {
     // Create FormData for file uploads
     const formData = new FormData();
-    
+
     // Append all non-file data
     Object.keys(data.value).forEach(key => {
       if (formSchema[key]?.type !== 'multifile' && formSchema[key]?.type !== 'file') {
@@ -251,6 +251,10 @@
   const createItem = async () => {
     try {
       const formData = createSharedFormData();
+
+      // add user relation
+      formData.append('user', pb.authStore.record?.id);
+
       const record = await pb.collection(type).create(formData);
 
       // the following adds a back-relation if needed (included in url query)
