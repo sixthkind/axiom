@@ -9,6 +9,7 @@ If the user is authenticated and not verified, only page allowed is auth/verify
 */
 
 export default defineNuxtRouteMiddleware((to, from) => {
+  const requireVerified = false;
   const isAuthenticated = pb.authStore.isValid;
 
   // Set to true to bypass check.
@@ -40,7 +41,7 @@ export default defineNuxtRouteMiddleware((to, from) => {
   }
 
   // Handle unverified users
-  if (!isVerified) {
+  if (!isVerified && requireVerified) {
     if (!verifyPathRegex.test(to.path)) {
       return navigateTo('/auth/verify');
     } else {
@@ -49,7 +50,7 @@ export default defineNuxtRouteMiddleware((to, from) => {
   }
 
   // Handle verified users that navigate to the verify page
-  if (isVerified) {
+  if (isVerified || !requireVerified) {
     if (verifyPathRegex.test(to.path)) {
       return navigateTo('/');
     }
