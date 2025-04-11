@@ -1,6 +1,6 @@
 {
-  "name": "@sixthkind/launchpad",
-  "version": "0.1.7",
+  "name": "@sixthkind/axiom",
+  "version": "0.1.8",
   "private": true,
   "type": "module",
   "scripts": {
@@ -15,6 +15,7 @@
     "env": "source .env.production && scp ./.env.production root@$SERVER_IP:/$SERVER_USER/$SERVER_PATH/.env",
     "deploy": "./deploy.sh",
     "all": "npm run generate && npm run deploy",
+    "cp": "cp -r .output/public/* pocketbase/pb_public",
     "pb": "cd ./pocketbase && ./pocketbase serve --http=0.0.0.0:8090"
   },
   "devDependencies": {
