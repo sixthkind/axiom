@@ -117,6 +117,9 @@
 
   const goBack = () => {
     window.history.back();
+    setTimeout(() => {
+      window.location.reload();
+    }, 100);
   }
 
   const toggleConfirm = () => {
@@ -233,8 +236,8 @@
     isSuccess.value = true;
     setTimeout(() => {
       isSuccess.value = false;
-      window.history.back();
-    }, 1500);
+      goBack();
+    }, 1000);
   }
 
   const updateItem = async () => {
