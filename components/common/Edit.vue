@@ -42,7 +42,7 @@
       </div>
 
       <div class="k-item animated fadeInUp">
-        <Vueform :schema="schema" v-model="data" @submit="handleSubmit" sync></Vueform>
+        <Vueform :schema="schema" v-model="data" @submit="handleSubmit" :endpoint="false" sync></Vueform>
       </div>
     </div>
 
@@ -233,8 +233,8 @@
     isSuccess.value = true;
     setTimeout(() => {
       isSuccess.value = false;
-      // window.history.back();
-    }, 1000);
+      window.history.back();
+    }, 1500);
   }
 
   const updateItem = async () => {
