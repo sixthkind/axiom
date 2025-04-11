@@ -116,10 +116,8 @@
   }
 
   const goBack = () => {
-    window.history.back();
-    setTimeout(() => {
-      window.location.reload();
-    }, 100);
+    window.location.href = `/${type}`;
+    // window.history.back();
   }
 
   const toggleConfirm = () => {
