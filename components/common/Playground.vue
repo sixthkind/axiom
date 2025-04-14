@@ -26,26 +26,26 @@
       </div>
 
       <div class="mt-4">
-          <div 
-            class="flex items-center gap-2 cursor-pointer text-slate-400 hover:text-slate-300 justify-end"
-            @click="isInfoExpanded = !isInfoExpanded"
-          >
-            <span class="text-sm">Information</span>
-            <span class="text-xs">{{ isInfoExpanded ? '▼' : '▶' }}</span>
-          </div>
-          
-          <div v-if="isInfoExpanded" class="mt-2 p-4 text-sm text-slate-400 animated fadeInDown">
-            <p class="mb-2">This playground allows you to:</p>
-            <ul class="list-disc list-inside space-y-1">
-              <li>Roleplay as an external system accessing your data</li>
-              <li>View how your personal agent responds on your behalf</li>
-              <li>Test cases to see minimize data access</li>
-            </ul>
-            <br/>
-            <p><span class="font-bold">API</span>  endpoint: <span class="k-tag">https://{name}.tansy.me/api/agent</span></p>
-            <p><span class="font-bold">MCP</span> server: <span class="k-tag">https://{name}.tansy.me/api/mcp</span></p>
-          </div>
+        <div 
+          class="flex items-center gap-2 cursor-pointer text-slate-400 hover:text-slate-300 justify-end"
+          @click="isInfoExpanded = !isInfoExpanded"
+        >
+          <span class="text-sm">Information</span>
+          <span class="text-xs">{{ isInfoExpanded ? '▼' : '▶' }}</span>
         </div>
+        
+        <div v-if="isInfoExpanded" class="mt-2 p-4 text-sm text-slate-400 animated fadeInDown">
+          <p class="mb-2">This playground allows you to:</p>
+          <ul class="list-disc list-inside space-y-1">
+            <li>Roleplay as an external system accessing your data</li>
+            <li>View how your personal agent responds on your behalf</li>
+            <li>Test cases to see minimize data access</li>
+          </ul>
+          <br/>
+          <p><span class="font-bold">API</span>  endpoint: <span class="k-tag">https://{name}.tansy.me/api/agent</span></p>
+          <p><span class="font-bold">MCP</span> server: <span class="k-tag">https://{name}.tansy.me/api/mcp</span></p>
+        </div>
+      </div>
     </div>
 
     <div v-if="isResults" class="k-item">
@@ -112,7 +112,7 @@
   const isTyping = ref(false);
   const config = useRuntimeConfig();
   const openrouterAssetID = String(config.public.openrouterAssetID);
-  import OpenAI from 'openai'
+  import OpenAI from 'openai';
   const API_KEY = (await pb.collection('_assets').getOne(openrouterAssetID)).title;
 
   const openai = new OpenAI({
@@ -120,8 +120,8 @@
     apiKey: API_KEY,
     dangerouslyAllowBrowser: true,
     defaultHeaders: {
-      'HTTP-Referer': 'https://tansy.me', // Replace with your website URL
-      'X-Title': 'TansyMe', // Replace with your app name
+      'HTTP-Referer': 'https://axiom.sixthkind.com', // Replace with your website URL
+      'X-Title': 'Axiom', // Replace with your app name
     },
     defaultQuery: { },
     fetch: (url, init) => {
@@ -130,7 +130,6 @@
       return fetch(url, init);
     }
   })
-
 
   onMounted(async () => {
     await init();
@@ -181,39 +180,38 @@
   };
 
   async function answerQuestion() {
-  isTyping.value = true
+    isTyping.value = true
 
-  let userDataPrompt = `
-    User Data:
-      ${results.value.map(result => `Title: ${result.name}\nContent: ${result.content}`).join('\n')}
-    `;
+    let userDataPrompt = `
+      User Data:
+        ${results.value.map(result => `Title: ${result.name}\nContent: ${result.content}`).join('\n')}
+      `;
 
-  let messages = [
-    { role: 'system', content: prompt },
-    { role: 'system', content: userDataPrompt },
-    { role: 'user', content: data.value.question }
-  ];
-  
-  try {
-    const stream = await openai.chat.completions.create({
-      messages: messages,
-      stream: true,
-      temperature: 0.7,
-      max_tokens: 500,
-    })
+    let messages = [
+      { role: 'system', content: prompt },
+      { role: 'system', content: userDataPrompt },
+      { role: 'user', content: data.value.question }
+    ];
+    
+    try {
+      const stream = await openai.chat.completions.create({
+        messages: messages,
+        stream: true,
+        temperature: 0.7,
+        max_tokens: 500,
+      })
 
-    assistantMessage.value = '';
-    for await (const chunk of stream) {
-      const content = chunk.choices[0]?.delta?.content || ''
-      assistantMessage.value += content
+      assistantMessage.value = '';
+      for await (const chunk of stream) {
+        const content = chunk.choices[0]?.delta?.content || '';
+        assistantMessage.value += content;
+      }
+    } catch (error) {
+      assistantMessage.value = 'I apologize, but I encountered an error. Please try again.';
+    } finally {
+      isTyping.value = false;
     }
-  } catch (error) {
-    console.error('Error:', error)
-    assistantMessage.value = 'I apologize, but I encountered an error. Please try again.';
-  } finally {
-    isTyping.value = false
   }
-}
 
 
   const filterItemsByTags = (items, clientTags) => {

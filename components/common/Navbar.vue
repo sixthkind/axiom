@@ -7,7 +7,7 @@
           <div class="flex items-center gap-3">
             <div class="bg-white bg-opacity-90 hover:bg-opacity-70 flex backdrop-blur mt-3 rounded-2xl border p-2">
               <a href="/">
-                <span class="font-bold text-primary">_</span><span class="font-bold text-slate-500">ax</span><span class="font-bold text-slate-500 opacity-80">iom</span>
+                <span class="font-bold text-primary">_</span><span class="font-bold text-slate-500">{{ sitename }}</span><span class="font-bold text-slate-500 opacity-80">{{ sitename2 }}</span>
               </a>
             </div>
 
@@ -75,6 +75,14 @@
 
 <script setup>
   import { pb } from "#imports";
+  const config = useRuntimeConfig();
+  const sitename = ref(String(config.public.sitename));
+  const sitename2 = ref(String(config.public.sitename2));
+  if (sitename.value == '') {
+    sitename.value = 'ax';
+    sitename2.value = 'iom';
+  }
+
   const email = ref(pb.authStore.record?.email || '');
 
   const emailUsername = computed(() => email.value.split('@')[0]);

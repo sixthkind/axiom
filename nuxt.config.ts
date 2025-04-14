@@ -29,7 +29,9 @@ export default defineNuxtConfig({
     public: {
       environment: process.env.VITE_ENVIRONMENT,
       pocketbaseURL: process.env.VITE_POCKETBASE_URL,
-      openrouterAssetID: process.env.VITE_OPENROUTER_ASSET_ID
+      openrouterAssetID: process.env.VITE_OPENROUTER_ASSET_ID,
+      sitename: process.env.VITE_SITENAME,
+      sitename2: process.env.VITE_SITENAME2
     }
   },
 
