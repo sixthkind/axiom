@@ -4,27 +4,29 @@
       <h1 class="text-3xl font-bold mb-6 text-center">{{ isSignIn ? 'Sign In' : 'Sign Up' }}</h1>
       <form @submit.prevent="isSignIn ? signIn() : signUp()">
 
-        <div class="mb-4 flex items-center justify-center">
-          <button 
-            type="button" 
-            @click="signInWithGoogle" 
-            class="w-full md:w-auto px-6 py-3 bg-gray-500 text-white rounded-lg flex items-center justify-center"
-          >
-            <svg class="w-5 h-5 mr-2" viewBox="0 0 48 48">
-              <path fill="#EA4335" d="M24 9.5c3.1 0 5.6 1.1 7.5 2.9l5.6-5.6C33.4 3.2 28.9 1 24 1 14.9 1 7.4 6.9 4.5 15.1l6.9 5.4C12.8 14.1 17 9.5 24 9.5z"/>
-              <path fill="#4285F4" d="M46.5 24c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3.2-2.4 5.9-5 7.7l7.6 5.9c4.4-4.1 7.2-10.1 7.2-17.1z"/>
-              <path fill="#FBBC05" d="M10.4 28.5c-1.1-3.2-1.1-6.8 0-10l-6.9-5.4C1.1 17.1 0 20.4 0 24s1.1 6.9 3.5 10.9l6.9-5.4z"/>
-              <path fill="#34A853" d="M24 46c6.5 0 12-2.1 16-5.7l-7.6-5.9c-2.2 1.5-5 2.4-8.4 2.4-7 0-12.9-4.7-15-11.1l-6.9 5.4C7.4 41.1 14.9 46 24 46z"/>
-              <path fill="none" d="M0 0h48v48H0z"/>
-            </svg>
-            {{ isSignIn ? 'Sign In' : 'Sign Up' }} with Google
-          </button>
-        </div>
+        <div v-if="isEnableGoogleAuth">
+          <div class="mb-4 flex items-center justify-center">
+            <button 
+              type="button" 
+              @click="signInWithGoogle" 
+              class="w-full md:w-auto px-6 py-3 bg-gray-500 text-white rounded-lg flex items-center justify-center"
+            >
+              <svg class="w-5 h-5 mr-2" viewBox="0 0 48 48">
+                <path fill="#EA4335" d="M24 9.5c3.1 0 5.6 1.1 7.5 2.9l5.6-5.6C33.4 3.2 28.9 1 24 1 14.9 1 7.4 6.9 4.5 15.1l6.9 5.4C12.8 14.1 17 9.5 24 9.5z"/>
+                <path fill="#4285F4" d="M46.5 24c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3.2-2.4 5.9-5 7.7l7.6 5.9c4.4-4.1 7.2-10.1 7.2-17.1z"/>
+                <path fill="#FBBC05" d="M10.4 28.5c-1.1-3.2-1.1-6.8 0-10l-6.9-5.4C1.1 17.1 0 20.4 0 24s1.1 6.9 3.5 10.9l6.9-5.4z"/>
+                <path fill="#34A853" d="M24 46c6.5 0 12-2.1 16-5.7l-7.6-5.9c-2.2 1.5-5 2.4-8.4 2.4-7 0-12.9-4.7-15-11.1l-6.9 5.4C7.4 41.1 14.9 46 24 46z"/>
+                <path fill="none" d="M0 0h48v48H0z"/>
+              </svg>
+              {{ isSignIn ? 'Sign In' : 'Sign Up' }} with Google
+            </button>
+          </div>
 
-        <div class="flex items-center my-4">
-          <hr class="flex-grow border-t border-gray-300">
-          <span class="mx-4 text-gray-500">or</span>
-          <hr class="flex-grow border-t border-gray-300">
+          <div class="flex items-center my-4">
+            <hr class="flex-grow border-t border-gray-300">
+            <span class="mx-4 text-gray-500">or</span>
+            <hr class="flex-grow border-t border-gray-300">
+          </div>
         </div>
 
         <div class="mb-4">
@@ -59,6 +61,7 @@ const isSignIn = ref(true);
 const email = ref('');
 const password = ref('');
 const errorMessage = ref('');
+const isEnableGoogleAuth = ref(false);
 // const environment = useRuntimeConfig().public.environment;
 
 function toggleAuthMode() {
