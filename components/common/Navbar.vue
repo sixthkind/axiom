@@ -5,7 +5,7 @@
         <div class="flex w-full items-center justify-between">
 
           <div class="flex items-center gap-3">
-            <div class="bg-white bg-opacity-90 hover:bg-opacity-70 flex backdrop-blur mt-3 rounded-2xl border p-2">
+            <div class="bg-white bg-opacity-90 hover:bg-opacity-70 flex backdrop-blur mt-3 rounded-lg border p-2">
               <a href="/">
                 <span class="font-bold text-primary">_</span><span class="font-bold text-slate-500">{{ sitename }}</span><span class="font-bold text-slate-500 opacity-80">{{ sitename2 }}</span>
               </a>
@@ -18,14 +18,14 @@
               Playground
             </a>
 
-            <div v-if="pb.authStore.isValid" class="hidden md:flex bg-white bg-opacity-70 backdrop-blur mt-3 rounded-2xl border p-2 flex items-center">
+            <div v-if="pb.authStore.isValid" class="hidden md:flex bg-white bg-opacity-70 backdrop-blur mt-3 rounded-lg border p-2 flex items-center">
               <a href="/profile">
                 <span class="font-bold text-primary">{{ emailUsername }}</span>
                 <span class="font-bold text-slate-500">@</span><span class="font-bold text-slate-400">{{ emailDomain }}</span>
               </a>
             </div>
 
-            <div v-if="pb.authStore.isValid" class="block md:hidden bg-white bg-opacity-70 backdrop-blur mt-3 rounded-2xl border p-2">
+            <div v-if="pb.authStore.isValid" class="block md:hidden bg-white bg-opacity-70 backdrop-blur mt-3 rounded-lg border p-2">
             <button @click="open = !open" class="text-gray-800 pr-1 pl-0.5">
               <svg
                 fill="currentColor"
@@ -54,7 +54,7 @@
 
         <nav
             v-if="open"
-            class="w-full lg:w-auto mt-3 md:hidden lg:mt-3 bg-white bg-opacity-70 backdrop-blur mt-3 rounded-2xl border"
+            class="w-full lg:w-auto mt-3 md:hidden lg:mt-3 bg-white bg-opacity-70 backdrop-blur mt-3 rounded-lg border"
             :class="{ block: open, hidden: !open }"
           >
           <ul class="flex flex-col lg:flex-row lg:gap-3">

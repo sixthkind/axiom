@@ -52,6 +52,12 @@
       <h2 class="font-bold text-primary text-lg text-center">Results</h2>
       <hr class="pb-2 border-slate-200">
 
+      <h2 class="font-bold text-slate-500 text-lg pb-2">🗣️ Response</h2>
+      <div>
+        <div v-html="assistantMessage" class="prose text-sm text-slate-500 max-w-none"></div>
+      </div>
+
+      <hr class="mt-4 mb-2 border-slate-200">
       <h2 class="font-bold text-slate-500 text-lg pb-2">🤖 Client</h2>
       <p><span class="font-bold text-slate-400">{{ data.client.name }}</span></p>
       <p><span class="font-bold text-slate-400 text-sm">{{ data.client.id }}</span></p>
@@ -60,12 +66,6 @@
           <span class="k-tag">#{{ tag.name }}&nbsp;</span>
         </span>
       </p>
-
-      <hr class="mt-4 mb-2 border-slate-200">
-      <h2 class="font-bold text-slate-500 text-lg pb-2">🗣️ Response</h2>
-      <div>
-        <div v-html="assistantMessage" class="prose text-sm text-slate-500 max-w-none"></div>
-      </div>
 
       <hr class="mt-4 mb-2 border-slate-200">
       <h2 class="font-bold text-slate-500 text-lg pb-2">📋 Data</h2>
