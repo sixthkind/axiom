@@ -1,0 +1,45 @@
+.k-container {
+  width: 100%;
+  max-width: 620px;
+  margin: auto;
+  padding-bottom: 36px;
+}
+
+.k-item {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(20px);
+  border-radius: 6px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.03);
+  padding: 20px;
+  margin-bottom: 12px;
+}
+
+.k-chip {
+  display: inline-block;
+  padding: 0.15rem 0.65rem;
+  border-radius: 9999px; /* Full rounded corners */
+  font-size: 0.775rem; /* Text size */
+  font-weight: 700; /* Bold text */
+}
+
+.k-flex {
+  display: flex;
+  align-items: center;
+  padding: 10px 20px;
+  margin-bottom: 12px;
+}
+
+.unread-glow {
+  box-shadow: 0 0 8px theme('colors.primary.600');
+}
+
+.translucent {
+  background: rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(12px);
+}
+
+.k-tag {
+  font-size: 0.775rem; /* Text size */
+  font-weight: 700; /* Bold text */
+  color: theme('colors.primary.600')
+}

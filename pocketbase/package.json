@@ -1,0 +1,13 @@
+{
+  "name": "@sixthkind/axiom-pocketbase",
+  "version": "0.3.0",
+  "private": true,
+  "scripts": {
+    "start": "./pocketbase serve --dev",
+    "start:prod": "./installpb.sh production && ./pocketbase serve --http=\"127.0.0.1:${PORT:-8090}\"",
+    "installpb": "./installpb.sh",
+    "installpb:r": "source ../.env && ssh ${SERVER_USER}@${SERVER_HOST} \"cd ${APP_PATH}/pocketbase && ./installpb.sh production\"",
+    "deploy": "./deploy.sh",
+    "docker": "node build-docker.js"
+  }
+}

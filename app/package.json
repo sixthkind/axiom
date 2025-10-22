@@ -1,0 +1,40 @@
+{
+  "name": "@sixthkind/axiom-app",
+  "version": "0.3.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "concurrently \"npm run dev\" \"npm run pb\"",
+    "build": "nuxt build",
+    "dev": "PORT=3000 nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare",
+    "tag": "git tag $npm_package_version && git push origin $npm_package_version",
+    "version": "echo $npm_package_name v$npm_package_version",
+    "env": "source .env.production && scp ./.env.production root@$SERVER_IP:/$SERVER_USER/$SERVER_PATH/.env",
+    "deploy": "./deploy.sh",
+    "all": "npm run generate && npm run cp && npm run pb",
+    "cp": "cp -r .output/public/* pocketbase/pb_public",
+    "pb": "cd ./pocketbase && ./pocketbase serve --http=0.0.0.0:8090"
+  },
+  "devDependencies": {
+    "@nuxt/ui": "^2.21.0",
+    "@tailwindcss/typography": "^0.5.10",
+    "@types/luxon": "^3.4.2",
+    "autoprefixer": "^10.4.16",
+    "concurrently": "^9.1.0",
+    "nuxt": "^3.9.0",
+    "postcss": "^8.4.32",
+    "vue": "^3.4.3",
+    "vue-router": "^4.2.5"
+  },
+  "dependencies": {
+    "@fontsource/quicksand": "^5.1.0",
+    "@vueform/nuxt": "^1.8.0",
+    "dotenv": "^16.5.0",
+    "luxon": "^3.5.0",
+    "openai": "^4.93.0",
+    "pocketbase": "^0.25.0"
+  }
+}
