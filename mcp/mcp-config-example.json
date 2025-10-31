@@ -1,0 +1,30 @@
+{
+  "mcpServers": {
+    "axiom-user-mcp": {
+      "command": "node",
+      "args": [
+        "/Users/hew/Desktop/Projects/sixthkind/AI/axiom/mcp/node_modules/.bin/ts-node",
+        "--esm",
+        "/Users/hew/Desktop/Projects/sixthkind/AI/axiom/mcp/src/user-server.ts"
+      ],
+      "env": {
+        "VITE_POCKETBASE_URL": "http://localhost:8090"
+      },
+      "description": "Axiom User API server with OAuth authentication"
+    },
+    "axiom-admin-mcp": {
+      "command": "node",
+      "args": [
+        "/Users/hew/Desktop/Projects/sixthkind/AI/axiom/mcp/node_modules/.bin/ts-node",
+        "--esm",
+        "/Users/hew/Desktop/Projects/sixthkind/AI/axiom/mcp/src/admin-server.ts"
+      ],
+      "env": {
+        "VITE_POCKETBASE_URL": "http://localhost:8090",
+        "ALLOWED_COLLECTIONS": "users,items,clients,tags"
+      },
+      "description": "Axiom admin MCP server with PocketBase integration"
+    }
+  }
+}
+
