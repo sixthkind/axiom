@@ -1,12 +1,15 @@
 <script setup>
 definePageMeta({
-  layout: "common",
   middleware: "auth"
 });
 </script>
 
 <template>
-  <CommonContainer>
-    <TableTags />
-  </CommonContainer>
+  <ion-page>
+    <ion-content>
+      <CommonContainer>
+        <TableTags />
+      </CommonContainer>
+    </ion-content>
+  </ion-page>
 </template>

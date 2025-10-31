@@ -1,7 +1,7 @@
 <template>
-  <div class="sticky-top translucent pt-2">
-    <CommonContainer>
-      <header class="flex w-full flex-col lg:flex-row justify-between items-center pb-3 mb-5">
+  <div class="sticky-top translucent safe-area-top pt-2">
+    <div class="max-w-screen-xl mx-auto px-5">
+      <header class="flex w-full flex-col lg:flex-row justify-between items-center pb-3">
         <div class="flex w-full items-center justify-between">
 
           <div class="flex items-center gap-3">
@@ -69,7 +69,7 @@
             </ul>
           </nav>
       </header>
-    </CommonContainer>
+    </div>
   </div>
 </template>
 
@@ -107,5 +107,10 @@
     position: sticky;
     top: 0;
     z-index: 1000; /* Optional: Ensures the element stays on top of other content */
+  }
+
+  .safe-area-top {
+    padding-top: env(safe-area-inset-top);
+    margin-top: calc(env(safe-area-inset-top) * -1);
   }
 </style>

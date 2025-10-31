@@ -1,7 +1,7 @@
 {
   "name": "@sixthkind/axiom",
   "author": "sixthkind",
-  "version": "0.3.0",
+  "version": "0.2.1",
   "private": true,
   "workspaces": [
     "app",

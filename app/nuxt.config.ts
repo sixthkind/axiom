@@ -11,6 +11,7 @@ export default defineNuxtConfig({
   css: [
     "~/assets/css/main.css",
     "~/assets/css/components.css",
+    "~/assets/css/ionic.css",
     "@fontsource/quicksand/400.css", 
     "@fontsource/quicksand/700.css"
   ],
@@ -24,7 +25,8 @@ export default defineNuxtConfig({
 
   modules: [
     "@vueform/nuxt",
-    "@nuxt/ui"
+    "@nuxt/ui",
+    "@nuxtjs/ionic"
   ],
 
   colorMode: {
@@ -40,6 +42,8 @@ export default defineNuxtConfig({
       sitename2: process.env.VITE_SITENAME2
     }
   },
+
+  ionic: {},
 
   compatibilityDate: "2024-10-16"
 });

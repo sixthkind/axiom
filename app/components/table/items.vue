@@ -29,7 +29,7 @@
         expand: 'tags'
       });
       items.value = records;
-      console.log(items.value);
+      // console.log(items.value);
     } catch (error) {
       console.error('Error fetching items:', error);
     } finally {
