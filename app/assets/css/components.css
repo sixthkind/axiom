@@ -1,3 +1,7 @@
+.content-container {
+  padding-top: 5rem; /* 80px - space for sticky navbar */
+}
+
 .k-container {
   width: 100%;
   max-width: 620px;

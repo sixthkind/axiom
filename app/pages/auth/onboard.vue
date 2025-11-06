@@ -1,12 +1,15 @@
 <script setup>
 definePageMeta({
-  layout: "common",
   middleware: "auth",
 });
 </script>
 
 <template>
-  <CommonContainer>
-    <AuthOnboard />
-  </CommonContainer>
+  <ion-page>
+    <ion-content>
+      <CommonContainer>
+        <AuthOnboard />
+      </CommonContainer>
+    </ion-content>
+  </ion-page>
 </template>

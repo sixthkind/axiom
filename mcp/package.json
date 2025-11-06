@@ -1,0 +1,31 @@
+{
+  "name": "axiom-mcp",
+  "version": "1.0.0",
+  "description": "Axiom AI mcp server",
+  "license": "ISC",
+  "author": "sixthkind",
+  "type": "module",
+  "main": "src/user-server.ts",
+  "scripts": {
+    "start": "tsx src/user-server.ts",
+    "admin": "tsx src/admin-server.ts",
+    "build": "tsc",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "inspect": "DANGEROUSLY_OMIT_AUTH=true npx @modelcontextprotocol/inspector tsx src/user-server.ts"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/inspector": "^0.17.1",
+    "@modelcontextprotocol/sdk": "^1.17.4",
+    "dotenv": "^16.6.1",
+    "express": "^4.18.2",
+    "undici": "^7.15.0",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^24.3.0",
+    "tsx": "^4.7.0",
+    "typescript": "^5.9.2"
+  }
+}
+

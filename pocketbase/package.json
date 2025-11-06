@@ -1,6 +1,6 @@
 {
   "name": "@sixthkind/axiom-pocketbase",
-  "version": "0.3.0",
+  "version": "0.2.1",
   "private": true,
   "scripts": {
     "start": "./pocketbase serve --dev",
