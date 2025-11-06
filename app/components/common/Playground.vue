@@ -13,7 +13,9 @@
           :items="clients"
         />
 
-        <h2 class="font-bold text-slate-500 text-lg">🤨&nbsp;Question</h2>
+        <StaticElement>
+          <h2 class="font-bold text-slate-500 text-lg">🤨&nbsp;Question</h2>
+        </StaticElement>
         <TextElement name="question" />
 
         <ButtonElement name="button" :submits="true" class="pt-4">
