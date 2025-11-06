@@ -66,12 +66,12 @@ routerAdd("GET", "/oauth/authorize", (e) => {
   }
   
   // Get the app URL from environment or use default
-  let appURL = 'https://axiom.app';
+  let appURL = 'https://unifier.me';
   try {
     const env = require(`${__hooks}/env.json`);
-    appURL = env.app_baseurl || appURL;
+    appURL = env.appurl || appURL;
     if ($app.isDev()) {
-      appURL = env.app_baseurl_test || 'http://localhost:3000';
+      appURL = env.appurl || 'http://localhost:3000';
     }
   } catch (err) {
     console.warn("[OAuth] Could not load env.json, using default URL:", appURL);
