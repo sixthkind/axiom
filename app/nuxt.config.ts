@@ -2,8 +2,19 @@
 
 import dotenv from 'dotenv';
 import path from 'path';
+import fs from 'fs';
 
-dotenv.config({ path: path.resolve(__dirname, '../.env') });
+// Try to load .env from parent directory (monorepo structure)
+const monorepoEnvPath = path.resolve(__dirname, '../.env');
+// Fallback to .env in current directory (deployment structure)
+const localEnvPath = path.resolve(__dirname, '.env');
+
+if (fs.existsSync(monorepoEnvPath)) {
+  dotenv.config({ path: monorepoEnvPath });
+} else if (fs.existsSync(localEnvPath)) {
+  dotenv.config({ path: localEnvPath });
+}
+// If neither exists, dotenv will use process.env (deployment might set env vars directly)
 
 export default defineNuxtConfig({
   ssr: false,
