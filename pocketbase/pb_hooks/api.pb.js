@@ -71,16 +71,43 @@ routerAdd("GET", "/api/v1/user/items", (e) => {
       (currentPage - 1) * perPage
     );
     
-    // Format item data
-    const itemData = items.map((item) => ({
-      id: item.id,
-      title: item.get("title"),
-      json: item.get("json"),
-      files: item.get("files"),
-      user: item.get("user"),
-      created: item.get("created"),
-      updated: item.get("updated")
-    }));
+    // Format item data with expanded tags
+    const itemData = items.map((item) => {
+      const tagIds = item.get("tags") || [];
+      let expandedTags = [];
+      
+      // Expand tags relation
+      if (tagIds && tagIds.length > 0) {
+        try {
+          expandedTags = tagIds.map(tagId => {
+            try {
+              const tag = $app.findRecordById("tags", tagId);
+              return {
+                id: tag.id,
+                name: tag.get("name"),
+                created: tag.get("created"),
+                updated: tag.get("updated")
+              };
+            } catch (e) {
+              return null;
+            }
+          }).filter(t => t !== null);
+        } catch (e) {
+          console.error("Error expanding tags:", e);
+        }
+      }
+      
+      return {
+        id: item.id,
+        name: item.get("name"),
+        content: item.get("content"),
+        tags: expandedTags,
+        files: item.get("files"),
+        user: item.get("user"),
+        created: item.get("created"),
+        updated: item.get("updated")
+      };
+    });
     
     return e.json(200, {
       items: itemData,
@@ -128,10 +155,35 @@ routerAdd("GET", "/api/v1/user/items/:id", (e) => {
       });
     }
     
+    // Expand tags relation
+    const tagIds = item.get("tags") || [];
+    let expandedTags = [];
+    
+    if (tagIds && tagIds.length > 0) {
+      try {
+        expandedTags = tagIds.map(tagId => {
+          try {
+            const tag = $app.findRecordById("tags", tagId);
+            return {
+              id: tag.id,
+              name: tag.get("name"),
+              created: tag.get("created"),
+              updated: tag.get("updated")
+            };
+          } catch (e) {
+            return null;
+          }
+        }).filter(t => t !== null);
+      } catch (e) {
+        console.error("Error expanding tags:", e);
+      }
+    }
+    
     return e.json(200, {
       id: item.id,
-      title: item.get("title"),
-      json: item.get("json"),
+      name: item.get("name"),
+      content: item.get("content"),
+      tags: expandedTags,
       files: item.get("files"),
       user: item.get("user"),
       created: item.get("created"),
@@ -141,6 +193,105 @@ routerAdd("GET", "/api/v1/user/items/:id", (e) => {
     console.error("Error fetching item:", error);
     return e.json(500, {
       error: error.message || "Failed to fetch item"
+    });
+  }
+});
+
+// PATCH /api/v1/user/items/:id - Update item
+routerAdd("PATCH", "/api/v1/user/items/:id", (e) => {
+  const { validateApiKey } = require(`${__hooks}/utils/auth.js`);
+  try {
+    const validation = validateApiKey(e, $app);
+    
+    if (!validation.valid) {
+      return e.json(401, {
+        error: validation.error
+      });
+    }
+
+    const user = validation.user;
+    const itemId = e.request.pathValue("id");
+    
+    // Fetch the item
+    let item;
+    try {
+      item = $app.findRecordById("items", itemId);
+    } catch (err) {
+      return e.json(404, {
+        error: "Item not found"
+      });
+    }
+    
+    // Verify the item belongs to this user
+    if (item.get("user") !== user.id) {
+      return e.json(403, {
+        error: "Access denied: This item does not belong to you"
+      });
+    }
+    
+    // Parse request body
+    const data = new DynamicModel({
+      name: "",
+      content: "",
+      tags: [],
+      files: []
+    });
+    e.bindBody(data);
+    
+    // Update fields if provided
+    if (data.name !== undefined && data.name !== null) {
+      item.set("name", data.name);
+    }
+    if (data.content !== undefined && data.content !== null) {
+      item.set("content", data.content);
+    }
+    if (data.tags !== undefined && data.tags !== null) {
+      item.set("tags", data.tags);
+    }
+    if (data.files !== undefined && data.files !== null) {
+      item.set("files", data.files);
+    }
+    
+    $app.save(item);
+    
+    // Expand tags relation for response
+    const tagIds = item.get("tags") || [];
+    let expandedTags = [];
+    
+    if (tagIds && tagIds.length > 0) {
+      try {
+        expandedTags = tagIds.map(tagId => {
+          try {
+            const tag = $app.findRecordById("tags", tagId);
+            return {
+              id: tag.id,
+              name: tag.get("name"),
+              created: tag.get("created"),
+              updated: tag.get("updated")
+            };
+          } catch (e) {
+            return null;
+          }
+        }).filter(t => t !== null);
+      } catch (e) {
+        console.error("Error expanding tags:", e);
+      }
+    }
+    
+    return e.json(200, {
+      id: item.id,
+      name: item.get("name"),
+      content: item.get("content"),
+      tags: expandedTags,
+      files: item.get("files"),
+      user: item.get("user"),
+      created: item.get("created"),
+      updated: item.get("updated")
+    });
+  } catch (error) {
+    console.error("Error updating item:", error);
+    return e.json(500, {
+      error: error.message || "Failed to update item"
     });
   }
 });
@@ -161,8 +312,9 @@ routerAdd("POST", "/api/v1/user/items", (e) => {
     
     // Parse request body
     const data = new DynamicModel({
-      title: "",
-      json: {},
+      name: "",
+      content: "",
+      tags: [],
       files: []
     });
     e.bindBody(data);
@@ -170,16 +322,42 @@ routerAdd("POST", "/api/v1/user/items", (e) => {
     // Create the item
     const collection = $app.findCollectionByNameOrId("items");
     const record = new Record(collection);
-    record.set("title", data.title || "");
-    record.set("json", data.json || {});
+    record.set("name", data.name || "");
+    record.set("content", data.content || "");
+    record.set("tags", data.tags || []);
     record.set("files", data.files || []);
     record.set("user", user.id);
     $app.save(record);
     
+    // Expand tags relation for response
+    const tagIds = record.get("tags") || [];
+    let expandedTags = [];
+    
+    if (tagIds && tagIds.length > 0) {
+      try {
+        expandedTags = tagIds.map(tagId => {
+          try {
+            const tag = $app.findRecordById("tags", tagId);
+            return {
+              id: tag.id,
+              name: tag.get("name"),
+              created: tag.get("created"),
+              updated: tag.get("updated")
+            };
+          } catch (e) {
+            return null;
+          }
+        }).filter(t => t !== null);
+      } catch (e) {
+        console.error("Error expanding tags:", e);
+      }
+    }
+    
     return e.json(201, {
       id: record.id,
-      title: record.get("title"),
-      json: record.get("json"),
+      name: record.get("name"),
+      content: record.get("content"),
+      tags: expandedTags,
       files: record.get("files"),
       user: record.get("user"),
       created: record.get("created"),
@@ -227,15 +405,41 @@ routerAdd("GET", "/api/v1/user/clients", (e) => {
       (currentPage - 1) * perPage
     );
     
-    // Format client data
-    const clientData = clients.map((client) => ({
-      id: client.id,
-      name: client.get("name"),
-      accessTags: client.get("accessTags"),
-      user: client.get("user"),
-      created: client.get("created"),
-      updated: client.get("updated")
-    }));
+    // Format client data with expanded accessTags
+    const clientData = clients.map((client) => {
+      const tagIds = client.get("accessTags") || [];
+      let expandedTags = [];
+      
+      // Expand accessTags relation
+      if (tagIds && tagIds.length > 0) {
+        try {
+          expandedTags = tagIds.map(tagId => {
+            try {
+              const tag = $app.findRecordById("tags", tagId);
+              return {
+                id: tag.id,
+                name: tag.get("name"),
+                created: tag.get("created"),
+                updated: tag.get("updated")
+              };
+            } catch (e) {
+              return null;
+            }
+          }).filter(t => t !== null);
+        } catch (e) {
+          console.error("Error expanding tags:", e);
+        }
+      }
+      
+      return {
+        id: client.id,
+        name: client.get("name"),
+        accessTags: expandedTags,
+        user: client.get("user"),
+        created: client.get("created"),
+        updated: client.get("updated")
+      };
+    });
     
     return e.json(200, {
       clients: clientData,
@@ -283,10 +487,34 @@ routerAdd("GET", "/api/v1/user/clients/:id", (e) => {
       });
     }
     
+    // Expand accessTags relation
+    const tagIds = client.get("accessTags") || [];
+    let expandedTags = [];
+    
+    if (tagIds && tagIds.length > 0) {
+      try {
+        expandedTags = tagIds.map(tagId => {
+          try {
+            const tag = $app.findRecordById("tags", tagId);
+            return {
+              id: tag.id,
+              name: tag.get("name"),
+              created: tag.get("created"),
+              updated: tag.get("updated")
+            };
+          } catch (e) {
+            return null;
+          }
+        }).filter(t => t !== null);
+      } catch (e) {
+        console.error("Error expanding tags:", e);
+      }
+    }
+    
     return e.json(200, {
       id: client.id,
       name: client.get("name"),
-      accessTags: client.get("accessTags"),
+      accessTags: expandedTags,
       user: client.get("user"),
       created: client.get("created"),
       updated: client.get("updated")
@@ -295,6 +523,95 @@ routerAdd("GET", "/api/v1/user/clients/:id", (e) => {
     console.error("Error fetching client:", error);
     return e.json(500, {
       error: error.message || "Failed to fetch client"
+    });
+  }
+});
+
+// PATCH /api/v1/user/clients/:id - Update client
+routerAdd("PATCH", "/api/v1/user/clients/:id", (e) => {
+  const { validateApiKey } = require(`${__hooks}/utils/auth.js`);
+  try {
+    const validation = validateApiKey(e, $app);
+    
+    if (!validation.valid) {
+      return e.json(401, {
+        error: validation.error
+      });
+    }
+
+    const user = validation.user;
+    const clientId = e.request.pathValue("id");
+    
+    // Fetch the client
+    let client;
+    try {
+      client = $app.findRecordById("clients", clientId);
+    } catch (err) {
+      return e.json(404, {
+        error: "Client not found"
+      });
+    }
+    
+    // Verify the client belongs to this user
+    if (client.get("user") !== user.id) {
+      return e.json(403, {
+        error: "Access denied: This client does not belong to you"
+      });
+    }
+    
+    // Parse request body
+    const data = new DynamicModel({
+      name: "",
+      accessTags: []
+    });
+    e.bindBody(data);
+    
+    // Update fields if provided
+    if (data.name !== undefined && data.name !== null && data.name !== "") {
+      client.set("name", data.name);
+    }
+    if (data.accessTags !== undefined && data.accessTags !== null) {
+      client.set("accessTags", data.accessTags);
+    }
+    
+    $app.save(client);
+    
+    // Expand accessTags relation for response
+    const tagIds = client.get("accessTags") || [];
+    let expandedTags = [];
+    
+    if (tagIds && tagIds.length > 0) {
+      try {
+        expandedTags = tagIds.map(tagId => {
+          try {
+            const tag = $app.findRecordById("tags", tagId);
+            return {
+              id: tag.id,
+              name: tag.get("name"),
+              created: tag.get("created"),
+              updated: tag.get("updated")
+            };
+          } catch (e) {
+            return null;
+          }
+        }).filter(t => t !== null);
+      } catch (e) {
+        console.error("Error expanding tags:", e);
+      }
+    }
+    
+    return e.json(200, {
+      id: client.id,
+      name: client.get("name"),
+      accessTags: expandedTags,
+      user: client.get("user"),
+      created: client.get("created"),
+      updated: client.get("updated")
+    });
+  } catch (error) {
+    console.error("Error updating client:", error);
+    return e.json(500, {
+      error: error.message || "Failed to update client"
     });
   }
 });
@@ -334,10 +651,34 @@ routerAdd("POST", "/api/v1/user/clients", (e) => {
     record.set("user", user.id);
     $app.save(record);
     
+    // Expand accessTags relation for response
+    const tagIds = record.get("accessTags") || [];
+    let expandedTags = [];
+    
+    if (tagIds && tagIds.length > 0) {
+      try {
+        expandedTags = tagIds.map(tagId => {
+          try {
+            const tag = $app.findRecordById("tags", tagId);
+            return {
+              id: tag.id,
+              name: tag.get("name"),
+              created: tag.get("created"),
+              updated: tag.get("updated")
+            };
+          } catch (e) {
+            return null;
+          }
+        }).filter(t => t !== null);
+      } catch (e) {
+        console.error("Error expanding tags:", e);
+      }
+    }
+    
     return e.json(201, {
       id: record.id,
       name: record.get("name"),
-      accessTags: record.get("accessTags"),
+      accessTags: expandedTags,
       user: record.get("user"),
       created: record.get("created"),
       updated: record.get("updated")
@@ -454,6 +795,66 @@ routerAdd("GET", "/api/v1/user/tags/:id", (e) => {
   }
 });
 
+// PATCH /api/v1/user/tags/:id - Update tag
+routerAdd("PATCH", "/api/v1/user/tags/:id", (e) => {
+  const { validateApiKey } = require(`${__hooks}/utils/auth.js`);
+  try {
+    const validation = validateApiKey(e, $app);
+    
+    if (!validation.valid) {
+      return e.json(401, {
+        error: validation.error
+      });
+    }
+
+    const user = validation.user;
+    const tagId = e.request.pathValue("id");
+    
+    // Fetch the tag
+    let tag;
+    try {
+      tag = $app.findRecordById("tags", tagId);
+    } catch (err) {
+      return e.json(404, {
+        error: "Tag not found"
+      });
+    }
+    
+    // Verify the tag belongs to this user
+    if (tag.get("user") !== user.id) {
+      return e.json(403, {
+        error: "Access denied: This tag does not belong to you"
+      });
+    }
+    
+    // Parse request body
+    const data = new DynamicModel({
+      name: ""
+    });
+    e.bindBody(data);
+    
+    // Update name if provided
+    if (data.name !== undefined && data.name !== null && data.name !== "") {
+      tag.set("name", data.name);
+    }
+    
+    $app.save(tag);
+    
+    return e.json(200, {
+      id: tag.id,
+      name: tag.get("name"),
+      user: tag.get("user"),
+      created: tag.get("created"),
+      updated: tag.get("updated")
+    });
+  } catch (error) {
+    console.error("Error updating tag:", error);
+    return e.json(500, {
+      error: error.message || "Failed to update tag"
+    });
+  }
+});
+
 // POST /api/v1/user/tags - Create tag
 routerAdd("POST", "/api/v1/user/tags", (e) => {
   const { validateApiKey } = require(`${__hooks}/utils/auth.js`);
@@ -499,6 +900,138 @@ routerAdd("POST", "/api/v1/user/tags", (e) => {
     console.error("Error creating tag:", error);
     return e.json(500, {
       error: error.message || "Failed to create tag"
+    });
+  }
+});
+
+// DELETE /api/v1/user/items/:id - Delete item
+routerAdd("DELETE", "/api/v1/user/items/:id", (e) => {
+  const { validateApiKey } = require(`${__hooks}/utils/auth.js`);
+  try {
+    const validation = validateApiKey(e, $app);
+    
+    if (!validation.valid) {
+      return e.json(401, {
+        error: validation.error
+      });
+    }
+
+    const user = validation.user;
+    const itemId = e.request.pathValue("id");
+    
+    // Fetch the item
+    let item;
+    try {
+      item = $app.findRecordById("items", itemId);
+    } catch (err) {
+      return e.json(404, {
+        error: "Item not found"
+      });
+    }
+    
+    // Verify the item belongs to this user
+    if (item.get("user") !== user.id) {
+      return e.json(403, {
+        error: "Access denied: This item does not belong to you"
+      });
+    }
+    
+    // Delete the item
+    $app.delete(item);
+    
+    return e.json(204, {});
+  } catch (error) {
+    console.error("Error deleting item:", error);
+    return e.json(500, {
+      error: error.message || "Failed to delete item"
+    });
+  }
+});
+
+// DELETE /api/v1/user/clients/:id - Delete client
+routerAdd("DELETE", "/api/v1/user/clients/:id", (e) => {
+  const { validateApiKey } = require(`${__hooks}/utils/auth.js`);
+  try {
+    const validation = validateApiKey(e, $app);
+    
+    if (!validation.valid) {
+      return e.json(401, {
+        error: validation.error
+      });
+    }
+
+    const user = validation.user;
+    const clientId = e.request.pathValue("id");
+    
+    // Fetch the client
+    let client;
+    try {
+      client = $app.findRecordById("clients", clientId);
+    } catch (err) {
+      return e.json(404, {
+        error: "Client not found"
+      });
+    }
+    
+    // Verify the client belongs to this user
+    if (client.get("user") !== user.id) {
+      return e.json(403, {
+        error: "Access denied: This client does not belong to you"
+      });
+    }
+    
+    // Delete the client
+    $app.delete(client);
+    
+    return e.json(204, {});
+  } catch (error) {
+    console.error("Error deleting client:", error);
+    return e.json(500, {
+      error: error.message || "Failed to delete client"
+    });
+  }
+});
+
+// DELETE /api/v1/user/tags/:id - Delete tag
+routerAdd("DELETE", "/api/v1/user/tags/:id", (e) => {
+  const { validateApiKey } = require(`${__hooks}/utils/auth.js`);
+  try {
+    const validation = validateApiKey(e, $app);
+    
+    if (!validation.valid) {
+      return e.json(401, {
+        error: validation.error
+      });
+    }
+
+    const user = validation.user;
+    const tagId = e.request.pathValue("id");
+    
+    // Fetch the tag
+    let tag;
+    try {
+      tag = $app.findRecordById("tags", tagId);
+    } catch (err) {
+      return e.json(404, {
+        error: "Tag not found"
+      });
+    }
+    
+    // Verify the tag belongs to this user
+    if (tag.get("user") !== user.id) {
+      return e.json(403, {
+        error: "Access denied: This tag does not belong to you"
+      });
+    }
+    
+    // Delete the tag
+    $app.delete(tag);
+    
+    return e.json(204, {});
+  } catch (error) {
+    console.error("Error deleting tag:", error);
+    return e.json(500, {
+      error: error.message || "Failed to delete tag"
     });
   }
 });

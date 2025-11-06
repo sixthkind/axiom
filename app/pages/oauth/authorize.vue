@@ -7,7 +7,7 @@
           <Icon name="lucide:link" size="1.4em" class="text-indigo-600" />
         </div>
         <h1 class="text-2xl font-bold text-gray-900 mb-2">
-          Connect to Axiom
+          Connect to <span class="font-bold text-primary">_</span><span class="font-bold text-slate-500">{{ sitename }}</span><span class="font-bold text-slate-500 opacity-80">{{ sitename2 }}</span>
         </h1>
       </div>
 
@@ -107,6 +107,9 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue';
 import { authUtils, pb } from '#imports';
+const config = useRuntimeConfig();
+const sitename = ref(String(config.public.sitename));
+const sitename2 = ref(String(config.public.sitename2));
 
 // Disable auth middleware for this page (we handle auth manually)
 definePageMeta({

@@ -105,7 +105,7 @@ const getServer = (token: string) => {
   server.registerTool("get_user_profile",
     {
       title: "Get User Profile",
-      description: "Get the user profile information.",
+      description: "Get the authenticated user's profile information. Response contains: id, email, name, avatar, created, and updated timestamps.",
       inputSchema: { },
       annotations: { readOnlyHint: true }
     },
@@ -130,10 +130,10 @@ const getServer = (token: string) => {
   server.registerTool("get_user_items",
     {
       title: "Get User Items",
-      description: "Get all items for the authenticated user with pagination and filtering.",
+      description: "Get all items for the authenticated user with pagination. Returns an array of items with expanded tags. Each item contains: id, name, content, tags (array of tag objects), files (array of file IDs), user (owner ID), created, and updated timestamps.",
       inputSchema: { 
-        limit: z.number().int().min(1).max(100).default(50),
-        page: z.number().int().min(1).default(1)
+        limit: z.number().int().min(1).max(100).default(50).describe("Number of items per page (1-100, default: 50)"),
+        page: z.number().int().min(1).default(1).describe("Page number (default: 1)")
       },
       annotations: { readOnlyHint: true }
     },
@@ -162,9 +162,9 @@ const getServer = (token: string) => {
   server.registerTool("get_user_item",
     {
       title: "Get User Item",
-      description: "Get a specific item by ID.",
+      description: "Get a specific item by ID. Returns the item with expanded tags. Response contains: id, name, content, tags (array of tag objects with id, name, created, updated), files (array of file IDs), user (owner ID), created, and updated timestamps.",
       inputSchema: { 
-        itemId: z.string().min(1)
+        itemId: z.string().min(1).describe("The ID of the item to retrieve (required)")
       },
       annotations: { readOnlyHint: true }
     },
@@ -189,11 +189,12 @@ const getServer = (token: string) => {
   server.registerTool("create_user_item",
     {
       title: "Create User Item",
-      description: "Create a new item for the authenticated user.",
+      description: "Create a new item for the authenticated user. Returns the created item with expanded tags.",
       inputSchema: { 
-        title: z.string().optional().describe("The item title"),
-        json: z.record(z.any()).optional().describe("JSON data for the item"),
-        files: z.array(z.string()).optional().describe("Optional file IDs to attach")
+        name: z.string().optional().describe("The item name (optional)"),
+        content: z.string().optional().describe("The item content in editor format (optional)"),
+        tags: z.array(z.string()).optional().describe("Array of tag IDs to associate with the item (optional)"),
+        files: z.array(z.string()).optional().describe("Array of file IDs to attach to the item (optional)")
       }
     },
     async (input) => {
@@ -201,8 +202,9 @@ const getServer = (token: string) => {
         const result = await apiFetch("/api/v1/user/items", token, {
           method: "POST",
           body: {
-            title: input.title,
-            json: input.json,
+            name: input.name,
+            content: input.content,
+            tags: input.tags,
             files: input.files
           }
         });
@@ -224,10 +226,10 @@ const getServer = (token: string) => {
   server.registerTool("get_user_clients",
     {
       title: "Get User Clients",
-      description: "Get all clients for the authenticated user with pagination.",
+      description: "Get all clients for the authenticated user with pagination. Returns an array of clients with expanded accessTags. Each client contains: id, name, accessTags (array of tag objects), user (owner ID), created, and updated timestamps.",
       inputSchema: { 
-        limit: z.number().int().min(1).max(100).default(50),
-        page: z.number().int().min(1).default(1)
+        limit: z.number().int().min(1).max(100).default(50).describe("Number of clients per page (1-100, default: 50)"),
+        page: z.number().int().min(1).default(1).describe("Page number (default: 1)")
       },
       annotations: { readOnlyHint: true }
     },
@@ -256,9 +258,9 @@ const getServer = (token: string) => {
   server.registerTool("get_user_client",
     {
       title: "Get User Client",
-      description: "Get a specific client by ID.",
+      description: "Get a specific client by ID. Returns the client with expanded accessTags. Response contains: id, name, accessTags (array of tag objects with id, name, created, updated), user (owner ID), created, and updated timestamps.",
       inputSchema: { 
-        clientId: z.string().min(1)
+        clientId: z.string().min(1).describe("The ID of the client to retrieve (required)")
       },
       annotations: { readOnlyHint: true }
     },
@@ -283,10 +285,10 @@ const getServer = (token: string) => {
   server.registerTool("create_user_client",
     {
       title: "Create User Client",
-      description: "Create a new client for the authenticated user.",
+      description: "Create a new client for the authenticated user. Returns the created client with expanded accessTags.",
       inputSchema: { 
-        name: z.string().min(1).describe("The client name"),
-        accessTags: z.array(z.string()).optional().describe("Optional array of tag IDs for access control")
+        name: z.string().min(1).describe("The client name (required)"),
+        accessTags: z.array(z.string()).optional().describe("Array of tag IDs for access control (optional)")
       }
     },
     async (input) => {
@@ -316,10 +318,10 @@ const getServer = (token: string) => {
   server.registerTool("get_user_tags",
     {
       title: "Get User Tags",
-      description: "Get all tags for the authenticated user with pagination.",
+      description: "Get all tags for the authenticated user with pagination. Returns an array of tags. Each tag contains: id, name, user (owner ID), created, and updated timestamps.",
       inputSchema: { 
-        limit: z.number().int().min(1).max(100).default(50),
-        page: z.number().int().min(1).default(1)
+        limit: z.number().int().min(1).max(100).default(50).describe("Number of tags per page (1-100, default: 50)"),
+        page: z.number().int().min(1).default(1).describe("Page number (default: 1)")
       },
       annotations: { readOnlyHint: true }
     },
@@ -348,9 +350,9 @@ const getServer = (token: string) => {
   server.registerTool("get_user_tag",
     {
       title: "Get User Tag",
-      description: "Get a specific tag by ID.",
+      description: "Get a specific tag by ID. Response contains: id, name, user (owner ID), created, and updated timestamps.",
       inputSchema: { 
-        tagId: z.string().min(1)
+        tagId: z.string().min(1).describe("The ID of the tag to retrieve (required)")
       },
       annotations: { readOnlyHint: true }
     },
@@ -375,10 +377,9 @@ const getServer = (token: string) => {
   server.registerTool("create_user_tag",
     {
       title: "Create User Tag",
-      description: "Create a new tag for the authenticated user.",
+      description: "Create a new tag for the authenticated user. Returns the created tag with id, name, user (owner ID), created, and updated timestamps.",
       inputSchema: { 
-        name: z.string().min(1).describe("The tag name"),
-        color: z.string().optional().describe("Optional color for the tag (hex format)")
+        name: z.string().min(1).describe("The tag name (required)")
       }
     },
     async (input) => {
@@ -386,8 +387,7 @@ const getServer = (token: string) => {
         const result = await apiFetch("/api/v1/user/tags", token, {
           method: "POST",
           body: {
-            name: input.name,
-            color: input.color
+            name: input.name
           }
         });
         return { content: [{ type: "text", text: JSON.stringify(result, null, 2) }] };
@@ -397,6 +397,197 @@ const getServer = (token: string) => {
           content: [{ 
             type: "text", 
             text: JSON.stringify({ error: error.message || "Failed to create tag" }, null, 2) 
+          }],
+          isError: true
+        };
+      }
+    }
+  );
+
+  // Register tool: Update Item
+  server.registerTool("update_user_item",
+    {
+      title: "Update User Item",
+      description: "Update an existing item by ID. Only provided fields will be updated. Returns the updated item with expanded tags.",
+      inputSchema: { 
+        itemId: z.string().min(1).describe("The ID of the item to update (required)"),
+        name: z.string().optional().describe("The item name (optional)"),
+        content: z.string().optional().describe("The item content in editor format (optional)"),
+        tags: z.array(z.string()).optional().describe("Array of tag IDs to associate with the item (optional)"),
+        files: z.array(z.string()).optional().describe("Array of file IDs to attach to the item (optional)")
+      }
+    },
+    async (input) => {
+      try {
+        const body: any = {};
+        if (input.name !== undefined) body.name = input.name;
+        if (input.content !== undefined) body.content = input.content;
+        if (input.tags !== undefined) body.tags = input.tags;
+        if (input.files !== undefined) body.files = input.files;
+        
+        const result = await apiFetch(`/api/v1/user/items/${input.itemId}`, token, {
+          method: "PATCH",
+          body
+        });
+        return { content: [{ type: "text", text: JSON.stringify(result, null, 2) }] };
+      } catch (error: any) {
+        console.error("Failed to update item:", error.message);
+        return { 
+          content: [{ 
+            type: "text", 
+            text: JSON.stringify({ error: error.message || "Failed to update item" }, null, 2) 
+          }],
+          isError: true
+        };
+      }
+    }
+  );
+
+  // Register tool: Update Client
+  server.registerTool("update_user_client",
+    {
+      title: "Update User Client",
+      description: "Update an existing client by ID. Only provided fields will be updated. Returns the updated client with expanded accessTags.",
+      inputSchema: { 
+        clientId: z.string().min(1).describe("The ID of the client to update (required)"),
+        name: z.string().optional().describe("The client name (optional)"),
+        accessTags: z.array(z.string()).optional().describe("Array of tag IDs for access control (optional)")
+      }
+    },
+    async (input) => {
+      try {
+        const body: any = {};
+        if (input.name !== undefined) body.name = input.name;
+        if (input.accessTags !== undefined) body.accessTags = input.accessTags;
+        
+        const result = await apiFetch(`/api/v1/user/clients/${input.clientId}`, token, {
+          method: "PATCH",
+          body
+        });
+        return { content: [{ type: "text", text: JSON.stringify(result, null, 2) }] };
+      } catch (error: any) {
+        console.error("Failed to update client:", error.message);
+        return { 
+          content: [{ 
+            type: "text", 
+            text: JSON.stringify({ error: error.message || "Failed to update client" }, null, 2) 
+          }],
+          isError: true
+        };
+      }
+    }
+  );
+
+  // Register tool: Update Tag
+  server.registerTool("update_user_tag",
+    {
+      title: "Update User Tag",
+      description: "Update an existing tag by ID. Only provided fields will be updated. Returns the updated tag.",
+      inputSchema: { 
+        tagId: z.string().min(1).describe("The ID of the tag to update (required)"),
+        name: z.string().optional().describe("The tag name (optional)")
+      }
+    },
+    async (input) => {
+      try {
+        const body: any = {};
+        if (input.name !== undefined) body.name = input.name;
+        
+        const result = await apiFetch(`/api/v1/user/tags/${input.tagId}`, token, {
+          method: "PATCH",
+          body
+        });
+        return { content: [{ type: "text", text: JSON.stringify(result, null, 2) }] };
+      } catch (error: any) {
+        console.error("Failed to update tag:", error.message);
+        return { 
+          content: [{ 
+            type: "text", 
+            text: JSON.stringify({ error: error.message || "Failed to update tag" }, null, 2) 
+          }],
+          isError: true
+        };
+      }
+    }
+  );
+
+  // Register tool: Delete Item
+  server.registerTool("delete_user_item",
+    {
+      title: "Delete User Item",
+      description: "Delete an existing item by ID. This action cannot be undone.",
+      inputSchema: { 
+        itemId: z.string().min(1).describe("The ID of the item to delete (required)")
+      }
+    },
+    async (input) => {
+      try {
+        await apiFetch(`/api/v1/user/items/${input.itemId}`, token, {
+          method: "DELETE"
+        });
+        return { content: [{ type: "text", text: JSON.stringify({ success: true, message: "Item deleted successfully" }, null, 2) }] };
+      } catch (error: any) {
+        console.error("Failed to delete item:", error.message);
+        return { 
+          content: [{ 
+            type: "text", 
+            text: JSON.stringify({ error: error.message || "Failed to delete item" }, null, 2) 
+          }],
+          isError: true
+        };
+      }
+    }
+  );
+
+  // Register tool: Delete Client
+  server.registerTool("delete_user_client",
+    {
+      title: "Delete User Client",
+      description: "Delete an existing client by ID. This action cannot be undone.",
+      inputSchema: { 
+        clientId: z.string().min(1).describe("The ID of the client to delete (required)")
+      }
+    },
+    async (input) => {
+      try {
+        await apiFetch(`/api/v1/user/clients/${input.clientId}`, token, {
+          method: "DELETE"
+        });
+        return { content: [{ type: "text", text: JSON.stringify({ success: true, message: "Client deleted successfully" }, null, 2) }] };
+      } catch (error: any) {
+        console.error("Failed to delete client:", error.message);
+        return { 
+          content: [{ 
+            type: "text", 
+            text: JSON.stringify({ error: error.message || "Failed to delete client" }, null, 2) 
+          }],
+          isError: true
+        };
+      }
+    }
+  );
+
+  // Register tool: Delete Tag
+  server.registerTool("delete_user_tag",
+    {
+      title: "Delete User Tag",
+      description: "Delete an existing tag by ID. This action cannot be undone.",
+      inputSchema: { 
+        tagId: z.string().min(1).describe("The ID of the tag to delete (required)")
+      }
+    },
+    async (input) => {
+      try {
+        await apiFetch(`/api/v1/user/tags/${input.tagId}`, token, {
+          method: "DELETE"
+        });
+        return { content: [{ type: "text", text: JSON.stringify({ success: true, message: "Tag deleted successfully" }, null, 2) }] };
+      } catch (error: any) {
+        console.error("Failed to delete tag:", error.message);
+        return { 
+          content: [{ 
+            type: "text", 
+            text: JSON.stringify({ error: error.message || "Failed to delete tag" }, null, 2) 
           }],
           isError: true
         };
