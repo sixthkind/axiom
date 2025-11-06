@@ -1,6 +1,6 @@
 {
   "name": "axiom-mcp",
-  "version": "1.0.0",
+  "version": "0.2.2",
   "description": "Axiom AI mcp server",
   "license": "ISC",
   "author": "sixthkind",
@@ -28,4 +28,3 @@
     "typescript": "^5.9.2"
   }
 }
-

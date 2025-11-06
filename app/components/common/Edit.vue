@@ -116,7 +116,11 @@
   }
 
   const goBack = () => {
-    window.location.href = `/${type}`;
+    if(type == 'users') {
+      window.location.href = '/profile';
+    } else {
+      window.location.href = `/${type}`;
+    }
     // window.history.back();
   }
 

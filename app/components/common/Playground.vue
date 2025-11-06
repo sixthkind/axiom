@@ -175,7 +175,7 @@
       results.value = filterItemsByTags(res, data.value.client.expand.tags);
       isResults.value = true;
 
-      answerQuestion();
+      await answerQuestion();
     } catch (error) {
       errorMessage.value = error.message || 'An error occurred while submitting the request';
     }

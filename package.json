@@ -1,7 +1,7 @@
 {
   "name": "@sixthkind/axiom",
   "author": "sixthkind",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "private": true,
   "workspaces": [
     "app",
@@ -10,6 +10,7 @@
   "scripts": {
     "start": "concurrently \"npm start --workspace=app\" \"npm start --workspace=pocketbase\"",
     "build": "npm run generate --workspace=app",
+    "vsync": "jq --arg v \"$npm_package_version\" '.version = $v' app/package.json > app/package.json.tmp && mv app/package.json.tmp app/package.json && jq --arg v \"$npm_package_version\" '.version = $v' mcp/package.json > mcp/package.json.tmp && mv mcp/package.json.tmp mcp/package.json && jq --arg v \"$npm_package_version\" '.version = $v' pocketbase/package.json > pocketbase/package.json.tmp && mv pocketbase/package.json.tmp pocketbase/package.json",
     "tag": "git tag $npm_package_version && git push origin $npm_package_version",
     "version": "echo $npm_package_name v$npm_package_version",
     "env": "source .env.production && scp ./.env.production root@$SERVER_IP:/$SERVER_USER/$SERVER_PATH/.env",
